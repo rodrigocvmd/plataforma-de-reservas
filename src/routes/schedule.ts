@@ -90,6 +90,39 @@ scheduleRouter.post("/unavailable-slot", async (req: Request, res: Response) => 
 	}
 });
 
+scheduleRouter.get("/unavailable-slot/", async (req: Request, res: Response) => {
+	try {
+		const unavailableSlot = await prisma.unavailableSlot.findMany();
+		res.status(200).json(unavailableSlot);
+	} catch (error) {
+		const errMessage = (error as Error).message;
+		res.status(500).json({ error: "Erro ao buscar horários bloqueados.", details: errMessage });
+	}
+});
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+scheduleRouter.get(
+	"/unavailable-slot/:id",
+	async (req: Request<{ id: string }>, res: Response): Promise<any> => {
+		const { id } = req.params;
+
+		const parsedId = Number(id);
+		if (isNaN(parsedId)) {
+			return res.status(400).json({ error: "ID inválido." });
+		}
+
+		try {
+			const unavailableSlot = await prisma.unavailableSlot.findUnique({
+				where: { id: parsedId },
+			});
+			res.status(200).json(unavailableSlot);
+		} catch (error) {
+			const errMessage = (error as Error).message;
+			res.status(500).json({ error: "Erro ao buscar horários bloqueados.", details: errMessage });
+		}
+	}
+);
+
 scheduleRouter.delete(
 	"/unavailable-slot/:id",
 	async (req: Request<{ id: string }>, res: Response) => {

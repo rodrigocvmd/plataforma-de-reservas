@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const usersRouters = Router();
 const prisma = new PrismaClient();
 
-usersRouters.get("/", async (req, res) => {
+usersRouters.get("/", async (_, res) => {
 	try {
 		const users = await prisma.user.findMany();
 		res.status(200).json(users);
@@ -24,7 +24,7 @@ usersRouters.post("/", async (req, res) => {
 		res.status(201).json(newUser);
 	} catch (error) {
 		const errMessage = (error as Error).message;
-		res.status(500).json({ error: "Erro ao listar usuários.", details: errMessage });
+		res.status(500).json({ error: "Erro ao criar usuários.", details: errMessage });
 	}
 });
 

@@ -8,15 +8,45 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  createdAt   DateTime      @default(now())
+  Reservation Reservation[]
 }
 
 model Resource {
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String
+  createdAt       DateTime          @default(now())
+  Reservation     Reservation[]
+  Schedule        Schedule[]
+  UnavailableSlot UnavailableSlot[]
+}
+
+model Reservation {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  resourceId Int
+  date       DateTime
+  user       User     @relation(fields: [userId], references: [id])
+  resource   Resource @relation(fields: [resourceId], references: [id])
+}
+
+model Schedule {
   id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  createdAt   DateTime @default(now())
+  resourceId  Int
+  resource    Resource @relation(fields: [resourceId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  isAvailable Boolean  @default(true)
+}
+
+model UnavailableSlot {
+  id         Int      @id @default(autoincrement())
+  resourceId Int
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  startTime  DateTime
+  endTime    DateTime
 }
