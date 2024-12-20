@@ -29,7 +29,8 @@ model Reservation {
   id         Int      @id @default(autoincrement())
   userId     Int
   resourceId Int
-  date       DateTime
+  startTime  DateTime
+  endTime    DateTime
   user       User     @relation(fields: [userId], references: [id])
   resource   Resource @relation(fields: [resourceId], references: [id])
 }
@@ -40,7 +41,7 @@ model Schedule {
   resource    Resource @relation(fields: [resourceId], references: [id])
   startTime   DateTime
   endTime     DateTime
-  isAvailable Boolean  @default(true)
+  isAvailable Boolean  @default(false)
 }
 
 model UnavailableSlot {

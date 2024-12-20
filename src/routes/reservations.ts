@@ -45,17 +45,39 @@ reservationRouter.get(
 	}
 );
 
-reservationRouter.post("/", async (req, res) => {
-	const { userId, resourceId, date } = req.body;
+reservationRouter.post("/", async (req: Request, res: Response): Promise<any> => {
+	const { userId, resourceId, startTime, endTime } = req.body;
 
 	try {
-		const reservation = await prisma.reservation.create({
-			data: {
-				userId,
-				resourceId,
-				date: new Date(date),
+		const newStartTime = new Date(startTime);
+		const newEndTime = new Date(endTime);
+
+		const availableSchedule = await prisma.schedule.findFirst({
+			where: {
+				resourceId: Number(resourceId),
+				isAvailable: true,
+				startTime: { lte: newStartTime },
+				endTime: { gte: newEndTime },
 			},
 		});
+
+		if (!availableSchedule) {
+			return res.status(400).json({
+				error: "Horário indisponível",
+				details: "O horário solicitado não está marcado como disponível.",
+			});
+		}
+
+		// Criar a nova reserva
+		const reservation = await prisma.reservation.create({
+			data: {
+				userId: Number(userId),
+				resourceId: Number(resourceId),
+				startTime: newStartTime,
+				endTime: newEndTime,
+			},
+		});
+
 		res.status(201).json(reservation);
 	} catch (error) {
 		const errMessage = (error as Error).message;
