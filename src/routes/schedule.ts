@@ -1,8 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, Router } from "express";
+import { verifyToken } from "middlewares/authMiddlewares";
 
 const scheduleRouter = Router();
 const prisma = new PrismaClient();
+
+scheduleRouter.use(verifyToken);
 
 scheduleRouter.get("/unavailable-slot/", async (req: Request, res: Response) => {
 	try {

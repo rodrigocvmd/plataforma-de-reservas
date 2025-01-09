@@ -9,11 +9,12 @@ interface JwtPayload {
 	role: string;
 }
 
-export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader || !authHeader.startsWith("Bearer ")) {
-		return res.status(401).json({ error: "Token não fornecido ou inválido" });
+		res.status(401).json({ error: "Token não fornecido ou inválido" });
+		return;
 	}
 
 	const token = authHeader.split(" ")[1];
@@ -23,6 +24,8 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 		req.user = decoded;
 		next();
 	} catch (error) {
-		return res.status(401).json({ error: "Token inválido ou expirado." });
+		console.error("Erro ao verificar token:", error);
+		res.status(401).json({ error: "Token inválido ou expirado." });
+		return;
 	}
 };

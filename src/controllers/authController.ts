@@ -5,7 +5,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const JWT_SECRET = process.env.JWT_SECRET || "102030";
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1H";
 
 export const registerUser = async (req: Request, res: Response) => {
