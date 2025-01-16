@@ -14,7 +14,12 @@ model User {
   password    String
   createdAt   DateTime      @default(now())
   Reservation Reservation[]
-  role        String        @default("user")
+  role        Role          @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Resource {

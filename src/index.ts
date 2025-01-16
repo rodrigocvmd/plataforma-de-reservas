@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
 	res.send("Servidor está rodando");
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
 	console.log(`Servidor rodando na porta ${port} `);
 });
+
+export { app, server };

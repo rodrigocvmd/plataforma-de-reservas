@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, Router } from "express";
-import { verifyToken } from "middlewares/authMiddlewares";
+import { verifyToken } from "../middlewares/authMiddlewares";
 
 const scheduleRouter = Router();
 const prisma = new PrismaClient();

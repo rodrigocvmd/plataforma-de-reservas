@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { loginUser, registerUser } from "controllers/authController";
+import { loginUser, registerUser } from "../controllers/authController";
 import { Router } from "express";
 import { verifyToken } from "../middlewares/authMiddlewares";
 import { protectedResourceController } from "../controllers/protectedResourceController";
