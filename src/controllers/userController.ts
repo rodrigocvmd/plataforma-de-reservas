@@ -21,7 +21,7 @@ export const getUserById = async (
 			return;
 		}
 
-		res.status(404).json({ user });
+		res.status(200).json({ user });
 		return;
 	} catch (error) {
 		console.error("Erro ao buscar usuário:", error);
