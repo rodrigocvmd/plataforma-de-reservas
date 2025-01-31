@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, Router } from "express";
+import { isTimeSlotAvailable } from "services/reservationService";
 
 const reservationRouter = Router();
 const prisma = new PrismaClient();
@@ -51,6 +52,37 @@ reservationRouter.post("/", async (req: Request, res: Response): Promise<any> =>
 	try {
 		const newStartTime = new Date(startTime);
 		const newEndTime = new Date(endTime);
+
+		const { available, reason } = await isTimeSlotAvailable({
+			resourceId: Number(resourceId),
+			startTime: newStartTime,
+			endTime: newEndTime,
+		});
+
+		if (!available) {
+			return res.status(400).json({
+				error: "Horário indisponível",
+				details: reason,
+			});
+		}
+
+		const reservation = await prisma.reservation.create({
+			data: {
+				userId: Number(userId),
+				resourceId: Number(resourceId),
+				startTime: newStartTime,
+				endTime: newEndTime,
+			},
+		});
+
+		res.status(201).json(reservation);
+	}catch(error){
+		const errMessage = (error as Error).message
+		res.status(500).json({
+			error: "Não foi possível confirmar a reserva",
+			details: errMessage
+		})
+	}
 
 		const availableSchedule = await prisma.schedule.findFirst({
 			where: {

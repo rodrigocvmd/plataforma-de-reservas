@@ -26,6 +26,7 @@ model Resource {
   id              Int               @id @default(autoincrement())
   title           String
   description     String
+  isBlocked       Boolean           @default(false)
   createdAt       DateTime          @default(now())
   Reservation     Reservation[]
   Schedule        Schedule[]

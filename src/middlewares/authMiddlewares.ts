@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { Role } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
@@ -21,7 +22,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
 
 	try {
 		const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-		req.user = decoded;
+		req.user = { ...decoded, id: Number(decoded.id), role: decoded.role as Role };
 		next();
 	} catch (error) {
 		console.error("Erro ao verificar token:", error);
