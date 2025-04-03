@@ -50,9 +50,14 @@ reservationRouter.post("/", async (req: Request, res: Response): Promise<any> =>
 	const { userId, resourceId, startTime, endTime } = req.body;
 
 	try {
+		// Converter as strings de data para objetos Date
 		const newStartTime = new Date(startTime);
 		const newEndTime = new Date(endTime);
 
+		// Validação da disponibilidade do horário:
+		// 1. Verifica se o recurso não está bloqueado;
+		// 2. Verifica se há um horário disponível (Schedule) que cubra o período solicitado;
+		// 3. Verifica se não há conflito com algum UnavailableSlot.
 		const { available, reason } = await isTimeSlotAvailable({
 			resourceId: Number(resourceId),
 			startTime: newStartTime,
@@ -66,41 +71,7 @@ reservationRouter.post("/", async (req: Request, res: Response): Promise<any> =>
 			});
 		}
 
-		const reservation = await prisma.reservation.create({
-			data: {
-				userId: Number(userId),
-				resourceId: Number(resourceId),
-				startTime: newStartTime,
-				endTime: newEndTime,
-			},
-		});
-
-		res.status(201).json(reservation);
-	}catch(error){
-		const errMessage = (error as Error).message
-		res.status(500).json({
-			error: "Não foi possível confirmar a reserva",
-			details: errMessage
-		})
-	}
-
-		const availableSchedule = await prisma.schedule.findFirst({
-			where: {
-				resourceId: Number(resourceId),
-				isAvailable: true,
-				startTime: { lte: newStartTime },
-				endTime: { gte: newEndTime },
-			},
-		});
-
-		if (!availableSchedule) {
-			return res.status(400).json({
-				error: "Horário indisponível",
-				details: "O horário solicitado não está marcado como disponível.",
-			});
-		}
-
-		// Criar a nova reserva
+		// Se a validação passar, cria a reserva
 		const reservation = await prisma.reservation.create({
 			data: {
 				userId: Number(userId),
@@ -113,7 +84,10 @@ reservationRouter.post("/", async (req: Request, res: Response): Promise<any> =>
 		res.status(201).json(reservation);
 	} catch (error) {
 		const errMessage = (error as Error).message;
-		res.status(500).json({ error: "Não foi possível confirmar a reserva", details: errMessage });
+		res.status(500).json({
+			error: "Não foi possível confirmar a reserva",
+			details: errMessage,
+		});
 	}
 });
 

@@ -15,6 +15,7 @@ model User {
   createdAt   DateTime      @default(now())
   Reservation Reservation[]
   role        Role          @default(USER)
+  ownedResources Resource[]
 }
 
 enum Role {
@@ -31,6 +32,8 @@ model Resource {
   Reservation     Reservation[]
   Schedule        Schedule[]
   UnavailableSlot UnavailableSlot[]
+  ownerId         Int               // Chave estrangeira para o dono
+  owner           User              @relation(fields: [ownerId], references: [id]) // Relação com User
 }
 
 model Reservation {
