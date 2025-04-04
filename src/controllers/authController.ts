@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -23,12 +23,17 @@ export const registerUser = async (req: Request, res: Response) => {
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
+		let userRole: Role = Role.USER; // Default para o enum USER
+		if (role && typeof role === "string" && role.toUpperCase() === Role.ADMIN) {
+			userRole = Role.ADMIN;
+		}
+
 		const newUser = await prisma.user.create({
 			data: {
 				email,
 				password: hashedPassword,
 				name,
-				role: role || "user",
+				role: userRole,
 			},
 		});
 
@@ -42,27 +47,32 @@ export const registerUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
 	const { email, password } = req.body;
 
 	if (!email || !password) {
-		return res.status(400).json({ error: "Todos os campos são obrigatórios." });
+		res.status(400).json({ error: "Todos os campos são obrigatórios." });
+		return;
 	}
 
 	try {
 		const user = await prisma.user.findUnique({ where: { email } });
 
 		if (!user || !(await bcrypt.compare(password, user.password))) {
-			return res.status(401).json({ error: "Email ou Senha inválidos." });
+			res.status(401).json({ error: "Email ou Senha inválidos." });
+			return;
 		}
 
+		// A função login já estava correta, incluindo user.role (que vem do DB como enum) no token
 		const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
 			expiresIn: JWT_EXPIRES_IN,
 		});
 
-		return res.status(200).json({ message: "Login bem sucedido.", token });
+		res.status(200).json({ message: "Login bem sucedido.", token });
+		return;
 	} catch (error) {
-		console.error("Erro capturado no logn:", error);
-		return res.status(500).json({ error: "Erro interno de servidor." });
+		console.error("Erro capturado no login:", error);
+		res.status(500).json({ error: "Erro interno de servidor." });
+		return;
 	}
 };

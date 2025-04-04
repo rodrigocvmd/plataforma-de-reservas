@@ -7,20 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int           @id @default(autoincrement())
-  name        String
-  email       String        @unique
-  password    String
-  createdAt   DateTime      @default(now())
-  Reservation Reservation[]
-  role        Role          @default(USER)
-  ownedResources Resource[]
-}
-
 enum Role {
   USER
   ADMIN
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  password       String
+  createdAt      DateTime      @default(now())
+  Reservation    Reservation[]
+  role           Role          @default(USER)
+  ownedResources Resource[]
 }
 
 model Resource {
@@ -32,7 +32,7 @@ model Resource {
   Reservation     Reservation[]
   Schedule        Schedule[]
   UnavailableSlot UnavailableSlot[]
-  ownerId         Int               // Chave estrangeira para o dono
+  ownerId         Int // Chave estrangeira para o dono
   owner           User              @relation(fields: [ownerId], references: [id]) // Relação com User
 }
 
