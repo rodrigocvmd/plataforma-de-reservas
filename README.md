@@ -18,8 +18,8 @@ Este projeto é uma API RESTful para um sistema de gerenciamento e reserva de re
 
 Antes de começar, certifique-se de ter instalado em sua máquina:
 
-* [Node.js](https://nodejs.org/)
-* [npm](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
+* [Node.js](https://nodejs.org/) (Versão 18.x ou superior recomendada)
+* [npm](https://www.npmjs.com/) (geralmente vem com o Node.js) ou [Yarn](https://yarnpkg.com/)
 * [Git](https://git-scm.com/)
 * [PostgreSQL](https://www.postgresql.org/) instalado e um servidor rodando.
 
@@ -54,8 +54,8 @@ Siga os passos abaixo para configurar e rodar o projeto localmente:
         # Formato: postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public
         DATABASE_URL="postgresql://seu_usuario:sua_senha@localhost:5432/nome_do_banco?schema=public"
 
-        # Chave secreta para gerar os tokens JWT
-        JWT_SECRET="SUA_SENHA_AQUI"
+        # Chave secreta para gerar os tokens JWT (use uma string longa e segura)
+        JWT_SECRET="SUA_CHAVE_SECRETA_FORTE_AQUI"
 
         # Porta em que o servidor irá rodar (opcional, padrão 3000 se não definida)
         # PORT=3000
@@ -77,4 +77,77 @@ Siga os passos abaixo para configurar e rodar o projeto localmente:
 Após a instalação e configuração, inicie o servidor de desenvolvimento:
 
 ```bash
-npm run **dev**
+npm run dev
+```
+
+O servidor estará rodando na porta definida no seu arquivo `.env` (ou na porta 3000 por padrão). Você verá uma mensagem no console indicando que o servidor foi iniciado.
+
+---
+
+## 🧪 Testes (Opcional)
+
+Para rodar os testes automatizados (se configurados):
+
+```bash
+npm test
+```
+
+---
+
+## 🌟 Diferenciais do Sistema
+
+* **Gerenciamento de Tempo**:
+    * Reservas baseadas em horários específicos.
+    * Validações para evitar conflitos de reservas.
+* **Regras de Uso Personalizadas**:
+    * Configuração de políticas para recursos (ex.: limite de horas, prioridade de usuários).
+* **Notificações por Email**:
+    * Confirmações e lembretes automáticos enviados aos usuários.
+    * Integração com **APIs de email** como **Nodemailer**.
+
+---
+
+## 🚀 Funcionalidades Implementadas
+
+1.  **Autenticação e Autorização:**
+    * Registro e Login de usuários (USER, ADMIN) com JWT.
+    * Middlewares de verificação de token e roles.
+2.  **Gerenciamento de Usuários (CRUD):**
+    * Operações básicas de criação, leitura, atualização e deleção para usuários (com controle de acesso).
+3.  **Gerenciamento de Recursos (CRUD):**
+    * Operações básicas para recursos (salas, etc.), com controle de acesso por proprietário (Owner) ou Admin.
+4.  **Gerenciamento de Horários Disponíveis (CRUD):**
+    * Definição de blocos de tempo disponíveis (`Schedule`) e indisponíveis (`UnavailableSlot`) para recursos, com controle de acesso.
+5.  **Gerenciamento de Reservas (CRUD):**
+    * Criação, visualização e cancelamento de reservas, com controle de acesso (Admin, Dono da reserva).
+    * Validação básica de disponibilidade de horário.
+
+---
+
+## 💡 Benefícios do Projeto
+
+* **Aprendizado Técnico**:
+    * Implementação de validações complexas no backend.
+    * Integração de notificações via APIs de email.
+* **Relevância para Portfólio**:
+    * Sistema corporativo comum, com aplicação prática no mercado.
+    * Demonstra habilidades em gerenciamento de recursos e integrações avançadas.
+
+---
+
+## 🛠️ Próximas Etapas
+
+1.  Refinar regras de negócio (ex: antecedência de cancelamento, limites de reserva).
+2.  Implementar testes automatizados mais abrangentes (unitários/integração).
+3.  (Opcional) Adicionar funcionalidade de upload de imagens para recursos.
+4.  Desenvolver a interface frontend com React.
+5.  Documentar a API (ex: Swagger/OpenAPI).
+6.  Preparar para deploy.
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+```
